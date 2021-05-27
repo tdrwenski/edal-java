@@ -264,8 +264,8 @@
             <url>https://oss.sonatype.org/service/local/staging/deploy/maven2</url>
         </repository>
         <snapshotRepository>
-            <id>edal-snapshots</id>
-            <url>https://oss.sonatype.org/content/repositories/snapshots</url>
+            <id>unidata-snapshots</id>
+            <url>https://artifacts.unidata.ucar.edu/repository/unidata-snapshots/</url>
         </snapshotRepository>
     </distributionManagement>
     <modules>
