@@ -29,6 +29,7 @@
 package uk.ac.rdg.resc.edal.util;
 
 import java.lang.reflect.Field;
+import java.nio.file.FileSystems;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -1386,6 +1387,15 @@ public final class GISUtils implements ObjectFactory {
             String path;
             if (EpsgDatabasePath.DB_PATH == null) {
                 path = System.getProperty("java.io.tmpdir");
+                String separator = FileSystems.getDefault().getSeparator();
+                // fix windows path, otherwise:
+                // May 27, 2021 12:31:50 PM org.apache.sis.referencing.factory.sql.EPSGDataAccess getAuthority
+                // java.net.URISyntaxException: Illegal character in opaque part at index 10:
+                //     jdbc:h2:C:\tmp\path\/.h2/epsg.db
+                if (separator.equals("\\")) {
+                    path = path.replaceAll("\\\\", "/");
+                    path = "file:" + path;
+                }
             } else {
                 path = EpsgDatabasePath.DB_PATH;
             }
