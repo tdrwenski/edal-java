@@ -7,11 +7,11 @@
     <parent>
         <artifactId>edal</artifactId>
         <groupId>uk.ac.rdg.resc</groupId>
-        <version>1.5.0.2-SNAPSHOT</version>
+        <version>1.5.0.3-SNAPSHOT</version>
         <relativePath>..</relativePath>
     </parent>
     <properties>
-        <netcdfversion>5.4.2</netcdfversion>
+        <netcdfversion>5.5.0</netcdfversion>
     </properties>
     <artifactId>edal-cdm</artifactId>
     <packaging>jar</packaging>
