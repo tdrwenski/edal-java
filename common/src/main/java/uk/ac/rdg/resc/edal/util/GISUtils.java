@@ -28,6 +28,7 @@
 
 package uk.ac.rdg.resc.edal.util;
 
+import java.io.File;
 import java.lang.reflect.Field;
 import java.nio.file.FileSystems;
 import java.sql.Connection;
@@ -282,7 +283,7 @@ public final class GISUtils implements ObjectFactory {
                     .getMathTransform();
             if (transform.isIdentity())
                 return pos;
-            double[] point = new double[] { pos.getX(), pos.getY() };
+            double[] point = new double[] { pos.getX(), pos.getY(), 0 };
             transform.transform(point, 0, point, 0, 1);
             return new HorizontalPosition(point[0], point[1], targetCrs);
         } catch (Exception e) {
@@ -1399,6 +1400,9 @@ public final class GISUtils implements ObjectFactory {
             } else {
                 path = EpsgDatabasePath.DB_PATH;
             }
+            // Ensure path is suitable for a URI, especially on Windows machines
+            File fp = new File(path);
+            path = fp.toURI().toString();
             /*
              * AUTO_SERVER=TRUE means that this DB will run in embedded mode on
              * the first JVM. However, if a second JVM tries to access it, it

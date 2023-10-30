@@ -62,7 +62,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.velocity.Template;
 import org.apache.velocity.VelocityContext;
 import org.apache.velocity.app.VelocityEngine;
@@ -71,7 +71,6 @@ import org.apache.velocity.app.event.implement.EscapeXmlReference;
 import org.apache.velocity.exception.MethodInvocationException;
 import org.apache.velocity.exception.ParseErrorException;
 import org.apache.velocity.exception.ResourceNotFoundException;
-import org.apache.velocity.runtime.RuntimeConstants;
 import org.jfree.chart.ChartUtilities;
 import org.jfree.chart.JFreeChart;
 import org.joda.time.DateTime;
@@ -212,8 +211,6 @@ public class WmsServlet extends HttpServlet {
         props.put("class.resource.loader.class",
                 "org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader");
         velocityEngine = new VelocityEngine();
-        velocityEngine.setProperty(RuntimeConstants.RUNTIME_LOG_LOGSYSTEM_CLASS,
-                "org.apache.velocity.runtime.log.Log4JLogChute");
         velocityEngine.setProperty("runtime.log.logsystem.log4j.logger", "velocity");
         velocityEngine.init(props);
     }
@@ -790,10 +787,17 @@ public class WmsServlet extends HttpServlet {
 
                 Number value = discreteDataset.readSinglePoint(variableId, position,
                         plottingParameters.getTargetZ(), plottingParameters.getTargetT());
+                String valueStr = value != null ? value.toString() : "";
+                if(metadata.getParameter().getCategories() != null) {
+                    Category cat = metadata.getParameter().getCategories().get(value.intValue());
+                    if(cat != null && cat.getLabel() != null) {
+                        valueStr = cat.getLabel();
+                    }
+                }
                 FeatureInfoPoint featureInfoPoint;
                 if (value != null) {
                     featureInfoPoint = new FeatureInfoPoint(layerName, variableId, position,
-                            TimeUtils.dateTimeToISO8601(plottingParameters.getTargetT()), value,
+                            TimeUtils.dateTimeToISO8601(plottingParameters.getTargetT()), valueStr,
                             new Properties());
                     featureInfos.add(featureInfoPoint);
                 }
@@ -805,10 +809,18 @@ public class WmsServlet extends HttpServlet {
                      */
                     value = discreteDataset.readSinglePoint(child.getId(), position,
                             plottingParameters.getTargetZ(), plottingParameters.getTargetT());
+                    valueStr = value != null ? value.toString() : "";
+                    
+                    if(child.getParameter().getCategories() != null) {
+                        Category cat = child.getParameter().getCategories().get(value.intValue());
+                        if(cat != null && cat.getLabel() != null) {
+                            valueStr = cat.getLabel();
+                        }
+                    }
                     if (value != null) {
                         featureInfoPoint = new FeatureInfoPoint(layerNameToSave, child.getId(),
                                 position,
-                                TimeUtils.dateTimeToISO8601(plottingParameters.getTargetT()), value,
+                                TimeUtils.dateTimeToISO8601(plottingParameters.getTargetT()), valueStr,
                                 new Properties());
                         featureInfos.add(featureInfoPoint);
                     }
